@@ -32,3 +32,4 @@ build/
 ### VS Code ###
 .vscode/
 src/main/java/com/blogapp/bloggingapplication/firebasekey.json
+src/main/java/com/blogapp/bloggingapplication/repositories
