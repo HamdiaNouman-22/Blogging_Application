@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImplementation implements UserService {
     @Autowired
-    UserRepository userRepository;
-    @Autowired
     ModelMapper modelMapper;
     @Autowired
     private PasswordEncoder passwordEncoder;

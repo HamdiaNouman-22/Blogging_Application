@@ -21,8 +21,6 @@ import org.slf4j.LoggerFactory;
 @Service
 public class CategoryServiceImpl implements CategoryService {
     @Autowired
-    CategoryRepository categoryRepository;
-    @Autowired
     ModelMapper modelMapper;
     @Autowired
     FirebaseService firebaseService;

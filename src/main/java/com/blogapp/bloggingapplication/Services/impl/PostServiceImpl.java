@@ -33,8 +33,6 @@ public class PostServiceImpl implements PostService {
     @Autowired
     UserService userService;
     @Autowired
-    CategoryRepository categoryRepository;
-    @Autowired
     FirebaseService firebaseService;
     private static Logger logger = LoggerFactory.getLogger(PostServiceImpl.class);
 
