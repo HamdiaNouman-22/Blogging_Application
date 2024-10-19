@@ -1,24 +1,24 @@
 package com.blogapp.bloggingapplication.entities;
 
-import jakarta.persistence.*;
+import com.google.cloud.spring.data.firestore.Document;
+import lombok.Data;
+
 import java.util.*;
 
-@Entity
-@Table
+@Data
+@Document(collectionName="posts")
 public class Post {
-    @Id
+
     private String postId;
     private String title;
     private String content;
     private String imageName;
     private Date addedDate;
     private String titleTokens;
-    @ManyToOne
-    @JoinColumn(name = "category_id")
-    private Category category;
-    @ManyToOne
-    @JoinColumn(name = "emailaddress")
-    private User user;
+    private String categoryId;
+    private String userId;
+//    private Category category;
+//    private User user;
 
 
     public Post() {
@@ -72,19 +72,35 @@ public class Post {
         this.addedDate = addedDate;
     }
 
-    public Category getCategory() {
-        return category;
+//    public Category getCategory() {
+//        return category;
+//    }
+//
+//    public void setCategory(Category category) {
+//        this.category = category;
+//    }
+//
+//    public User getUser() {
+//        return user;
+//    }
+//
+//    public void setUser(User user) {
+//        this.user = user;
+//    }
+
+    public String getCategoryId() {
+        return categoryId;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
-    public User getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

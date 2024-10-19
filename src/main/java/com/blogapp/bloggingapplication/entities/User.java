@@ -1,7 +1,9 @@
 package com.blogapp.bloggingapplication.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import com.google.cloud.spring.data.firestore.Document;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,19 +11,14 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Entity
-@Table
+@Data
+@Document(collectionName="users")
 public class User implements UserDetails {
-
     @Id
     String emailaddress;
     @JsonIgnore
     String password;
     String about;
-
-    @ElementCollection
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "emailaddress"))
-    @Column(name = "roles")
     private List<String> roles = new ArrayList<>();
     public User() {
     }

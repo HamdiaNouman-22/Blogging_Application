@@ -1,18 +1,19 @@
 package com.blogapp.bloggingapplication.entities;
 
-import jakarta.persistence.*;
+import com.google.cloud.spring.data.firestore.Document;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
 
-@Entity
-@Table
+@Data
+@Document(collectionName = "comments")
 public class Comment {
     @Id
     private String id;
     private String content;
-
-    @ManyToOne
-     private Post post;
-    @ManyToOne
-    private User user;
+private String postId;
+    private String userId;
+//     private Post post;
+//    private User user;
 
     public Comment() {
         id="0";
@@ -34,19 +35,35 @@ public class Comment {
         this.content = content;
     }
 
-    public Post getPost() {
-        return post;
+//    public Post getPost() {
+//        return post;
+//    }
+//
+//    public void setPost(Post post) {
+//        this.post = post;
+//    }
+//
+//    public User getUser() {
+//        return user;
+//    }
+//
+//    public void setUser(User user) {
+//        this.user = user;
+//    }
+
+    public String getPostId() {
+        return postId;
     }
 
-    public void setPost(Post post) {
-        this.post = post;
+    public void setPostId(String postId) {
+        this.postId = postId;
     }
 
-    public User getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 }

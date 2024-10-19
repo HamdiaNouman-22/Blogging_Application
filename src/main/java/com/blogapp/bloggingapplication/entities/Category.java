@@ -1,21 +1,21 @@
 package com.blogapp.bloggingapplication.entities;
 
-import jakarta.persistence.*;
+import com.google.cloud.spring.data.firestore.Document;
+import lombok.Data;
+import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "categories")
+@Data
+@Document(collectionName = "categories")
 public class Category {
     @Id
-    @GeneratedValue
     Integer categoryId;
     String categoryTitle;
     String categoryDescription;
     //with cascade if we are adding or removing parent we want child to get added or removed with them
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
-    List<Post> posts=new ArrayList<>();
+    List<String> postids=new ArrayList<>();
 
     public Category() {
     }

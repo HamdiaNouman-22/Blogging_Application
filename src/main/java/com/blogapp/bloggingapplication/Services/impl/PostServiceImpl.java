@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
-    @Autowired
+
     private ModelMapper modelMapper;
     @Autowired
     UserService userService;
@@ -57,8 +57,10 @@ public class PostServiceImpl implements PostService {
             post.setImageName("default.png");
         }
         post.setAddedDate(new Date());
-        post.setUser(user);
-        post.setCategory(category);
+        post.setUserId(userid);
+        post.setCategoryId(categoryId);
+//        post.setUser(user);
+//        post.setCategory(category);
         post.setTitleTokens(this.firebaseService.tokenizeTitle(post.getTitle()));
         try {
             String updateTime = firebaseService.saveDocument("posts",post.getPostId(), post);

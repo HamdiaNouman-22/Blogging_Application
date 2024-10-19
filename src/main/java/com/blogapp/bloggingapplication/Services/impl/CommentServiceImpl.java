@@ -15,8 +15,7 @@ import java.util.concurrent.ExecutionException;
 
 @Service
 public class CommentServiceImpl implements CommentService {
-    @Autowired
-    private ModelMapper modelMapper;
+  ModelMapper modelMapper;
     @Autowired
     FirebaseService firebaseService;
 
@@ -33,8 +32,8 @@ public class CommentServiceImpl implements CommentService {
             throw new ResourceNotFoundException("Post with id: " + postid + " not found");
         }
         Comment comment = modelMapper.map(commentDTO, Comment.class);
-        comment.setUser(user);
-        comment.setPost(post);
+        comment.setUserId(userid);
+        comment.setPostId(postid);
        System.out.println(comment.getId());
         String updateTime = firebaseService.saveDocument("comments",comment.getId(), comment);
         System.out.println("Comment saved successfully with update time: " + updateTime);

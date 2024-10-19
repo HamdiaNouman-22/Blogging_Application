@@ -7,7 +7,6 @@ import com.blogapp.bloggingapplication.exceptions.ResourceNotFoundException;
 import com.blogapp.bloggingapplication.payloads.UserDTO;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.validation.Valid;
-import org.hibernate.engine.internal.Collections;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

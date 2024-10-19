@@ -1,11 +1,10 @@
 package com.blogapp.bloggingapplication.entities;
 
-import jakarta.persistence.*;
+import com.google.cloud.spring.data.firestore.Document;
+import lombok.Data;
 
-@Entity
-@Table(name = "roles")
+
 public class Role {
-    @Id
     private String id;
     private String name;
 

@@ -1,11 +1,8 @@
 package com.blogapp.bloggingapplication.payloads;
 
-import org.antlr.v4.runtime.misc.NotNull;
 
 public class CategoryDTO {
-    @NotNull
     String categoryTitle;
-    @NotNull
     String categoryDescription;
     public CategoryDTO() {
     }
