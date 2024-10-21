@@ -6,3 +6,4 @@
 *.class
 .DS_Store
 src/main/java/com/blogapp/bloggingapplication/firebasekey.json
+.env

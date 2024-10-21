@@ -51,6 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 
@@ -61,8 +62,14 @@ public class FirebaseInitialize {
     @PostConstruct
     public void initialize() {
         try {
+            String firebaseKeyJson = System.getenv("FIREBASE_KEY_JSON");
+
+            if (firebaseKeyJson == null || firebaseKeyJson.isEmpty()) {
+                throw new IOException("FIREBASE_KEY_JSON environment variable is missing or empty.");
+            }
+            ByteArrayInputStream serviceAccount = new ByteArrayInputStream(firebaseKeyJson.getBytes());
             // Update the path to point to the correct location in the Docker container
-            FileInputStream serviceAccount = new FileInputStream("/app/firebasekey.json");
+           // FileInputStream serviceAccount = new FileInputStream("/app/firebasekey.json");
 
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))

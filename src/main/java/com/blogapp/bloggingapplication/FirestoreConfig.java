@@ -17,8 +17,10 @@ import jakarta.annotation.PreDestroy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 //
 //import com.google.firestore.v1.FirestoreGrpc;
 
@@ -28,13 +30,21 @@ public class FirestoreConfig{
     @Bean
     public Firestore firestore() {
         try {
-            FileInputStream serviceAccount = new FileInputStream("/app/firebasekey.json");
-            GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
-            String projectId = System.getenv("SPRING_CLOUD_GCP_FIRESTORE_PROJECT_ID");
-            System.out.println("Using project ID: " + projectId);
-            if (projectId == null) {
-                throw new IllegalArgumentException("Environment variable SPRING_CLOUD_GCP_FIRESTORE_PROJECT_ID must be set");
+            String firebaseKeyJson = System.getenv("FIREBASE_KEY_JSON");
+            if (firebaseKeyJson == null || firebaseKeyJson.isEmpty()) {
+                throw new RuntimeException("FIREBASE_KEY_JSON environment variable is not set.");
             }
+            ByteArrayInputStream serviceAccountStream =
+                    new ByteArrayInputStream(firebaseKeyJson.getBytes(StandardCharsets.UTF_8));
+
+            GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccountStream);
+      //      FileInputStream serviceAccount = new FileInputStream("/app/firebasekey.json");
+//            GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
+            String projectId = System.getenv("SPRING_CLOUD_GCP_FIRESTORE_PROJECT_ID");
+//            System.out.println("Using project ID: " + projectId);
+//            if (projectId == null) {
+//                throw new IllegalArgumentException("Environment variable SPRING_CLOUD_GCP_FIRESTORE_PROJECT_ID must be set");
+//            }
             return FirestoreOptions.getDefaultInstance()
                     .toBuilder()
                     .setCredentials(credentials)

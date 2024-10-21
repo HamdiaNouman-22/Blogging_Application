@@ -1,0 +1,11 @@
+services:
+  blogging-application:
+    build:
+      context: .  
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    volumes:
+      - C:/Users/DELL/IdeaProjects/blogging-application/src/main/java/com/blogapp/bloggingapplication/firebasekey.json:/app/firebasekey.json
