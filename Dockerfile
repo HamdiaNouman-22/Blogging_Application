@@ -8,5 +8,9 @@ RUN chmod +x mvnw
 RUN ./mvnw clean package -DskipTests
 FROM openjdk:17-jdk-slim
 WORKDIR /app
-COPY --from=build /app/target/blogging-application-0.0.1-SNAPSHOT.jar ./blogging-application.jar
-CMD ["java", "-Dserver.port=${PORT}", "-jar", "blogging-application.jar"]
+COPY --from=build /app/target/blogging-application-0.0.1-SNAPSHOT.jar app.jar
+ENTRYPOINT ["java","-jar","/app/app.jar"]
+#CMD ["java", "-Dserver.port=${PORT}", "-jar", "blogging-application.jar"]
+
+
+

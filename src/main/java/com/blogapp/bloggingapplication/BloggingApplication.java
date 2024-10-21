@@ -21,6 +21,5 @@ public class BloggingApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args){
-        System.out.println("GOOGLE_APPLICATION_CREDENTIALS: " + System.getenv("GOOGLE_APPLICATION_CREDENTIALS"));
     }
 }
