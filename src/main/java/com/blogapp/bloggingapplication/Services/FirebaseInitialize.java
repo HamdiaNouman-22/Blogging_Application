@@ -63,6 +63,7 @@ public class FirebaseInitialize {
     public void initialize() {
         try {
             String firebaseKeyJson = System.getenv("FIREBASE_KEY_JSON");
+            System.out.println(firebaseKeyJson);
 
             if (firebaseKeyJson == null || firebaseKeyJson.isEmpty()) {
                 throw new IOException("FIREBASE_KEY_JSON environment variable is missing or empty.");

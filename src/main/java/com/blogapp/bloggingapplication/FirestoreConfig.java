@@ -17,9 +17,7 @@ import jakarta.annotation.PreDestroy;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 //
 //import com.google.firestore.v1.FirestoreGrpc;
@@ -36,7 +34,11 @@ public class FirestoreConfig{
             }
             ByteArrayInputStream serviceAccountStream =
                     new ByteArrayInputStream(firebaseKeyJson.getBytes(StandardCharsets.UTF_8));
-
+            BufferedReader reader = new BufferedReader(new InputStreamReader(serviceAccountStream));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
             GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccountStream);
       //      FileInputStream serviceAccount = new FileInputStream("/app/firebasekey.json");
 //            GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
