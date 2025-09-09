@@ -1,12 +1,15 @@
 package com.blogapp.bloggingapplication;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class EnvConfig {
-    private static final Dotenv dotenv=Dotenv.load();
-    public static String getFirebaseKeyJson(){
-        return dotenv.get("FIREBASE_KEY_JSON");
+
+    public static String getFirebaseKeyJson() {
+        return System.getenv("FIREBASE_KEY_JSON");
+    }
+
+    public static String getFirestoreProjectId() {
+        return System.getenv("SPRING_CLOUD_GCP_FIRESTORE_PROJECT_ID");
     }
 }
