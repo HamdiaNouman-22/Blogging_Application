@@ -36,11 +36,11 @@ public class FirestoreConfig {
     public Firestore firestore() {
         try {
             // String firebaseKeyJson = System.getenv("FIREBASE_KEY_JSON");
-            String firebaseKeyJson = dotenv.get("FIREBASE_KEY_JSON").trim().replace("\\n", "\n");
-            System.out.println(firebaseKeyJson);
+            String firebaseKeyJson = System.getenv("FIREBASE_KEY_JSON");
             if (firebaseKeyJson == null || firebaseKeyJson.isEmpty()) {
                 throw new RuntimeException("FIREBASE_KEY_JSON environment variable is not set.");
             }
+            firebaseKeyJson = firebaseKeyJson.trim().replace("\\n", "\n");
             System.out.println("1");
             ByteArrayInputStream serviceAccountStream =
                     new ByteArrayInputStream(firebaseKeyJson.getBytes(StandardCharsets.UTF_8));
