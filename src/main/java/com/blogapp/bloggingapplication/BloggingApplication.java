@@ -1,6 +1,5 @@
 package com.blogapp.bloggingapplication;
 
-import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.spring.data.firestore.repository.config.EnableReactiveFirestoreRepositories;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
@@ -8,8 +7,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -22,27 +19,34 @@ public class BloggingApplication implements CommandLineRunner {
         try {
             // Get Firebase JSON from env var
             String firebaseKeyJson = System.getenv("FIREBASE_KEY_JSON");
+
             if (firebaseKeyJson == null || firebaseKeyJson.isEmpty()) {
-                throw new RuntimeException("FIREBASE_KEY_JSON environment variable is not set.");
+                System.err.println("❌ FIREBASE_KEY_JSON is missing!");
+            } else {
+                System.out.println("✅ FIREBASE_KEY_JSON found, length = " + firebaseKeyJson.length());
             }
 
             // Fix escaped newlines (\n → actual newlines)
-            firebaseKeyJson = firebaseKeyJson.replace("\\n", "\n");
+            if (firebaseKeyJson != null) {
+                firebaseKeyJson = firebaseKeyJson.replace("\\n", "\n");
 
-            // Write to a temp file
-            Path tempFile = Files.createTempFile("firebase-", ".json");
-            Files.writeString(tempFile, firebaseKeyJson, StandardOpenOption.WRITE);
+                // Write to a temp file
+                Path tempFile = Files.createTempFile("firebase-", ".json");
+                Files.writeString(tempFile, firebaseKeyJson, StandardOpenOption.WRITE);
 
-            // Set system property so Spring Boot picks it up
-            System.setProperty("FIREBASE_KEY_JSON_FILE_PATH", tempFile.toAbsolutePath().toString());
+                // Set system property so Spring Boot picks it up
+                System.setProperty("FIREBASE_KEY_JSON_FILE_PATH", tempFile.toAbsolutePath().toString());
 
-            System.out.println("Firebase credentials written to: " + tempFile);
+                System.out.println("📂 Firebase credentials written to: " + tempFile);
+            }
+
+            SpringApplication.run(BloggingApplication.class, args);
 
         } catch (Exception e) {
-            throw new RuntimeException("Failed to write Firebase credentials file", e);
+            System.err.println("🔥 Application failed to start due to an error:");
+            e.printStackTrace(); // show full cause in Railway logs
+            throw new RuntimeException(e);
         }
-
-        SpringApplication.run(BloggingApplication.class, args);
     }
 
     @Bean
@@ -52,6 +56,6 @@ public class BloggingApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        System.out.println("Firestore should be initialized by Spring Boot now 🚀");
+        System.out.println("🚀 Firestore should be initialized by Spring Boot now");
     }
 }
