@@ -6,6 +6,11 @@ import com.blogapp.bloggingapplication.payloads.JWTAuthRequest;
 import com.blogapp.bloggingapplication.payloads.JWTAuthResponse;
 import com.blogapp.bloggingapplication.payloads.UserDTO;
 import com.blogapp.bloggingapplication.security.JwtTokenHelper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +34,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/v1/auth/")
 @Validated
+@Tag(name = "Authentication", description = "Endpoints for user login and registration")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -40,33 +46,45 @@ public class AuthController {
     UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
+    @Operation(
+            summary = "Login user",
+            description = "Authenticate user and return JWT token",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Successfully authenticated",
+                            content = @Content(schema = @Schema(implementation = JWTAuthResponse.class))),
+                    @ApiResponse(responseCode = "401", description = "Invalid username or password")
+            }
+    )
     @PostMapping("/login")
     public ResponseEntity<JWTAuthResponse> createToken(@RequestBody JWTAuthRequest jwtAuthRequest) throws Exception {
-        System.out.println(jwtAuthRequest.getUsername() + " " + jwtAuthRequest.getPassword());
         this.authenticate(jwtAuthRequest.getUsername(), jwtAuthRequest.getPassword());
 
         UserDetails userDetails = this.userDetailsService.loadUserByUsername(jwtAuthRequest.getUsername());
-        System.out.println(userDetails);
         String token = this.jwtTokenHelper.generateToken(userDetails);
         JWTAuthResponse response = new JWTAuthResponse();
         response.setToken(token);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+
     public void authenticate(String username, String password) throws Exception {
-        System.out.println("1");
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
-        System.out.println(authenticationToken);
         try {
             this.authenticationManager.authenticate(authenticationToken);
-            System.out.println("2");
         } catch (
                 ApiException e) {
-            System.out.println("Invalid Details");
             throw new ApiException("Invalid username or password");
         }
     }
-
+    @Operation(
+            summary = "Register new user",
+            description = "Create a new user account",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "User created successfully",
+                            content = @Content(schema = @Schema(implementation = UserDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "Validation errors occurred")
+            }
+    )
     @PostMapping("/register")
     ResponseEntity<?> registerUser(@Valid @RequestBody UserDTO userDTO,BindingResult result) {
         if (result.hasErrors()) {

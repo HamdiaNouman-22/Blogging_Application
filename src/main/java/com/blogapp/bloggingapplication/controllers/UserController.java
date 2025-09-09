@@ -6,6 +6,10 @@ import com.blogapp.bloggingapplication.Services.UserService;
 import com.blogapp.bloggingapplication.exceptions.ResourceNotFoundException;
 import com.blogapp.bloggingapplication.payloads.UserDTO;
 import com.fasterxml.jackson.annotation.JsonView;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @RequestMapping("/api/users")
 @Validated
+@Tag(name = "Users", description = "Endpoints for managing users")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -30,7 +35,12 @@ public class UserController {
     FirebaseService firebaseService;
     @Autowired
     ModelMapper modelMapper;
-
+    @Operation(summary = "Create a user", description = "Register a new user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User created successfully"),
+            @ApiResponse(responseCode = "400", description = "Validation error"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/")
     public ResponseEntity<?> createdUser(@Valid @RequestBody UserDTO userDTO, BindingResult result) throws ExecutionException, InterruptedException {
         if (result.hasErrors()) {
@@ -59,12 +69,22 @@ public class UserController {
         );
         return new ResponseEntity<>(errorMessage.toString(), HttpStatus.BAD_REQUEST);
     }
+    @Operation(summary = "Update a user", description = "Update an existing user by ID")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User updated successfully"),
+            @ApiResponse(responseCode = "404", description = "User not found")
+    })
     @PutMapping("/{userid}")
     public ResponseEntity<UserDTO> updateUser(@RequestBody UserDTO userDTO, @PathVariable("userid") String userid) throws ExecutionException,InterruptedException{
         UserDTO updateuser = this.userService.updateUser(userDTO, userid);
         return ResponseEntity.ok(updateuser);
     }
-
+    @Operation(summary = "Delete a user", description = "Delete a user by ID (admin only)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User deleted successfully"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - not an admin")
+    })
     @DeleteMapping("/{userid}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> DeleteUser(@PathVariable("userid") String userid) {
@@ -75,13 +95,21 @@ public class UserController {
         else{
         return new ResponseEntity<>(Map.of("message", "User deleted sucessfully"), HttpStatus.OK);}
     }
-
+    @Operation(summary = "Get all users", description = "Retrieve all users (public view)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Users retrieved successfully")
+    })
     @GetMapping("/")
     @JsonView(UserDTO.PublicView.class)
     public ResponseEntity<List<UserDTO>> getAllUsers() throws ExecutionException,InterruptedException{
         return ResponseEntity.ok(this.userService.getAllUsers());
     }
-
+    @Operation(summary = "Get single user", description = "Retrieve a single user by ID (public view)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User retrieved successfully"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @GetMapping("/{userid}")
     @JsonView(UserDTO.PublicView.class)
     public ResponseEntity<Object> getSingleUser(@PathVariable("userid") String userid) throws ExecutionException, InterruptedException{
