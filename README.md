@@ -8,8 +8,7 @@ Key Features
 - Security: JWT authentication, role-based access control, Spring Security integration
 - API Documentation: Fully documented with Swagger/OpenAPI
 
-Tech Stack
-Spring Boot | Firestore (NoSQL) | Firebase Storage | JWT | Swagger/OpenAPI
+Tech Stack : Spring Boot | Firestore (NoSQL) | Firebase Storage | JWT | Swagger/OpenAPI
 
 View API Docs in Swagger Editor:  
 [👉 Swagger UI](https://editor.swagger.io/?url=https://raw.githubusercontent.com/HamdiaNouman-22/Blogging_Application/refs/heads/master/src/main/java/com/blogapp/bloggingapplication/docs/api-docs.json)
