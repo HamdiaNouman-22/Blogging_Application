@@ -10,12 +10,38 @@ import org.springframework.context.annotation.Bean;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 @SpringBootApplication
 @EnableReactiveFirestoreRepositories
 public class BloggingApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
+        try {
+            // Get Firebase JSON from env var
+            String firebaseKeyJson = System.getenv("FIREBASE_KEY_JSON");
+            if (firebaseKeyJson == null || firebaseKeyJson.isEmpty()) {
+                throw new RuntimeException("FIREBASE_KEY_JSON environment variable is not set.");
+            }
+
+            // Fix escaped newlines (\n → actual newlines)
+            firebaseKeyJson = firebaseKeyJson.replace("\\n", "\n");
+
+            // Write to a temp file
+            Path tempFile = Files.createTempFile("firebase-", ".json");
+            Files.writeString(tempFile, firebaseKeyJson, StandardOpenOption.WRITE);
+
+            // Set system property so Spring Boot picks it up
+            System.setProperty("FIREBASE_KEY_JSON_FILE_PATH", tempFile.toAbsolutePath().toString());
+
+            System.out.println("Firebase credentials written to: " + tempFile);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to write Firebase credentials file", e);
+        }
+
         SpringApplication.run(BloggingApplication.class, args);
     }
 
@@ -26,23 +52,6 @@ public class BloggingApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Read Firebase JSON from environment variable
-        String firebaseKeyJson = System.getenv("FIREBASE_KEY_JSON");
-        if (firebaseKeyJson == null || firebaseKeyJson.isEmpty()) {
-            throw new RuntimeException("FIREBASE_KEY_JSON environment variable is not set.");
-        }
-
-        // Replace escaped newlines (\n) with actual newlines
-        firebaseKeyJson = firebaseKeyJson.replace("\\n", "\n");
-
-        try (ByteArrayInputStream serviceAccount =
-                     new ByteArrayInputStream(firebaseKeyJson.getBytes(StandardCharsets.UTF_8))) {
-
-            GoogleCredentials credentials = GoogleCredentials.fromStream(serviceAccount);
-            System.out.println("Firestore initialized successfully with credentials: " + credentials);
-
-        } catch (Exception e) {
-            System.err.println("Error initializing Firestore: " + e.getMessage());
-        }
+        System.out.println("Firestore should be initialized by Spring Boot now 🚀");
     }
 }
