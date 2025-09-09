@@ -46,32 +46,38 @@ package com.blogapp.bloggingapplication.Services;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import io.github.cdimascio.dotenv.Dotenv;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class FirebaseInitialize {
     private static Logger logger = LoggerFactory.getLogger(FirebaseInitialize.class);
-
+//    @Value("${FIREBASE_KEY_JSON}")
+//    private String firebaseKeyJson;
     @PostConstruct
     public void initialize() {
         try {
             String firebaseKeyJson = System.getenv("FIREBASE_KEY_JSON");
+         //   String firebaseKeyJson = System.getenv("FIREBASE_KEY_JSON");
             System.out.println(firebaseKeyJson);
 
             if (firebaseKeyJson == null || firebaseKeyJson.isEmpty()) {
                 throw new IOException("FIREBASE_KEY_JSON environment variable is missing or empty.");
             }
-            ByteArrayInputStream serviceAccount = new ByteArrayInputStream(firebaseKeyJson.getBytes());
+            firebaseKeyJson = firebaseKeyJson.trim().replace("\\n", "\n");
+            ByteArrayInputStream serviceAccount = new ByteArrayInputStream(firebaseKeyJson.getBytes(StandardCharsets.UTF_8));
             // Update the path to point to the correct location in the Docker container
            // FileInputStream serviceAccount = new FileInputStream("/app/firebasekey.json");
-
+            System.out.println("5");
             FirebaseOptions options = new FirebaseOptions.Builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
                     .setStorageBucket("blogging-application-d96d3.appspot.com")

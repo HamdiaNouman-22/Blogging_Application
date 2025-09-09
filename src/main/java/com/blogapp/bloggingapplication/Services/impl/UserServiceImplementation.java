@@ -46,7 +46,7 @@ public class UserServiceImplementation implements UserService {
         User user = this.dtotouser(userDTO);
         try {
             String id = user.getEmailaddress();
-            String updateTime =  firebaseService.saveDocument("users", id, user);
+            String updateTime = firebaseService.saveDocument("users", id, user);
             System.out.println("User saved successfully with update time: " + updateTime);
         } catch (
                 ExecutionException |
@@ -56,28 +56,29 @@ public class UserServiceImplementation implements UserService {
         return this.usertodto(user);
     }
 
-public UserDTO updateUser(UserDTO userDTO,String userId) throws ExecutionException, InterruptedException {
-    Map<String, Object> updates = new HashMap<>();
-    if (userDTO.getEmailaddress() != null) {
-        updates.put("emailaddress", userDTO.getEmailaddress());
-    }
-    if (userDTO.getAbout() != null) {
-        updates.put("about", userDTO.getAbout());
+    public UserDTO updateUser(UserDTO userDTO, String userId) throws ExecutionException, InterruptedException {
+        Map<String, Object> updates = new HashMap<>();
+        if (userDTO.getEmailaddress() != null) {
+            updates.put("emailaddress", userDTO.getEmailaddress());
+        }
+        if (userDTO.getAbout() != null) {
+            updates.put("about", userDTO.getAbout());
+        }
+
+        firebaseService.updateDocument("users", userId, updates);
+
+        UserDTO updatedUser = firebaseService.getDocument("users", userId, UserDTO.class);
+        return updatedUser;
     }
 
-    firebaseService.updateDocument("users", userId, updates);
-
-    UserDTO updatedUser = firebaseService.getDocument("users", userId, UserDTO.class);
-    return updatedUser;
-}
     @Override
     public String deleteUser(String id) {
-        return (firebaseService.deleteDocument("users",id));
+        return (firebaseService.deleteDocument("users", id));
     }
 
     @Override
-    public UserDTO getUserById(String id) throws ExecutionException, InterruptedException{
-        User user=firebaseService.getDocument("users",id,User.class);
+    public UserDTO getUserById(String id) throws ExecutionException, InterruptedException {
+        User user = firebaseService.getDocument("users", id, User.class);
         if (user == null) {
             throw new ResourceNotFoundException("User with id: " + id + " not found");
         }
@@ -86,8 +87,8 @@ public UserDTO updateUser(UserDTO userDTO,String userId) throws ExecutionExcepti
     }
 
     @Override
-    public List<UserDTO> getAllUsers() throws ExecutionException,InterruptedException{
-        List<User> users=this.firebaseService.getAllDocument("users",User.class);
+    public List<UserDTO> getAllUsers() throws ExecutionException, InterruptedException {
+        List<User> users = this.firebaseService.getAllDocument("users", User.class);
         List<UserDTO> userDTOS = users.stream().map(user -> this.usertodto(user)).collect(Collectors.toList());
         return userDTOS;
     }
